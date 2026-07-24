@@ -1,4 +1,5 @@
-import express from 'express'
+import express from "express";
+import logger from "./utils/logger.js";
 
 // creating express app instance
 const app = express();
@@ -6,22 +7,21 @@ const app = express();
 // middleware
 app.use(express.json());
 
-
 // health check
-app.get('/health', (req, res) => {
-    res.status(200).json({status: 'ok', message: 'Server is Running'})
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is Running" });
 });
 
 // if no route this is run
 app.use((req, res) => {
-    res.status(404).json({error: 'Route not found'})
+  res.status(404).json({ error: "Route not found" });
 });
-
 
 // global error handler
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({error: "Internal error"})
+  // console.error(err.stack); we can use logger instead of this
+  logger.error(err);
+  res.status(500).json({ error: "Internal error" });
 });
 
 export default app;

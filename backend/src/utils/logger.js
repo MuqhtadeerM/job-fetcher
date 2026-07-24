@@ -1,6 +1,7 @@
 import winston from "winston";
+import config from "../config/env.js";
 
-const { createLogger, format, transport } = winston;
+const { createLogger, format, transports } = winston;
 
 const logFormat = format.combine(
   format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
@@ -17,18 +18,18 @@ const logger = createLogger({
 
   //   1 - transport
   transports: [
-    new transport.Console({
+    new transports.Console({
       format: format.combine(format.colorize(), logFormat),
     }),
 
     //   2nd transport
-    new transport.File({
+    new transports.File({
       filename: "logs/error.log",
       level: "error",
     }),
 
     // 3-transport
-    new transport.File({
+    new transports.File({
       filename: "logs/combined.log",
     }),
   ],
