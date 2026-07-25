@@ -40,7 +40,10 @@ function validate(schema, source = "query") {
     // (e.g. the query string "20" becomes the actual number 20).
     // We overwrite req[source] with this cleaned-up version, so the
     // controller downstream always receives trustworthy, correctly-typed data.
-    req[source] = value;
+    req.validated = {
+      ...(req.validated || {}),
+      [source]: value,
+    };
 
     // next() hands control to the next middleware/route handler in the chain.
     // Without calling this, the request would simply hang forever.

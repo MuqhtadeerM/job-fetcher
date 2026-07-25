@@ -43,12 +43,12 @@ async function connectDB(attempt = 1) {
 // for shutdown this function called when it process is asked to terminate.
 
 async function disconnectDB() {
-  await mongoose.connect.close();
+  await mongoose.connection.close();
   logger.info("MongoDB connection closed gracefully");
 }
 
 //           Docker, and container orchestrators like Kubernetes during a
-//           redeploy or scale-down.
+// redeploy or scale-down.
 process.on("SIGINT", async () => {
   await disconnectDB();
   process.exit(0); // 0 = clean, intentional exit

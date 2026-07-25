@@ -6,15 +6,12 @@ import logger from "../utils/logger.js";
 // well-formed. Controllers here never re-validate — that would duplicate
 // responsibility that belongs to the validation layer.
 
-async function getJobs(req, res) {
+async function getJobs(req, res, next) {
   try {
-    // req.query has already been validated AND transformed by Joi
-    // (defaults applied, types coerced) thanks to our validate() middleware.
-    const { page, limit, ...filters } = req.query;
-
+    const { page, limit, ...filters } = req.validated.query;
     const result = await findJobs(filters, { page, limit });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       total: result.total,
       page: result.page,
@@ -24,34 +21,32 @@ async function getJobs(req, res) {
     });
   } catch (error) {
     logger.error(`getJobs failed: ${error.message}`);
-    res.status(500).json({ success: false, error: "Failed to fetch jobs" });
+    return next(error);
   }
 }
 
-async function getJobById(req, res) {
+async function getJobById(req, res, next) {
   try {
-    const job = await findJobById(req.params.id);
+    const job = await findJobById(req.validated.params.id);
 
     if (!job) {
-      // A well-formed ID that simply doesn't match any document —
-      // this is a legitimate 404, distinct from a 400 validation error.
       return res.status(404).json({ success: false, error: "Job not found" });
     }
 
-    res.status(200).json({ success: true, data: job });
+    return res.status(200).json({ success: true, data: job });
   } catch (error) {
     logger.error(`getJobById failed: ${error.message}`);
-    res.status(500).json({ success: false, error: "Failed to fetch job" });
+    return next(error);
   }
 }
 
-async function filterJobs(req, res) {
-  try {
-    const { page, limit, ...filters } = req.body;
 
+async function filterJobs(req, res, next) {
+  try {
+    const { page, limit, ...filters } = req.validated.body;
     const result = await findJobs(filters, { page, limit });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       total: result.total,
       page: result.page,
@@ -61,7 +56,7 @@ async function filterJobs(req, res) {
     });
   } catch (error) {
     logger.error(`filterJobs failed: ${error.message}`);
-    res.status(500).json({ success: false, error: "Failed to filter jobs" });
+    return next(error);
   }
 }
 

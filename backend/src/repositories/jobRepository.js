@@ -1,3 +1,5 @@
+import Job from "../models/Jobs.js";
+
 async function createOrUpdateJob(jobData) {
   //   filter: which document to look for — here, matching on applyUrl,
   //           our unique natural key from Step 5.

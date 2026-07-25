@@ -1,6 +1,6 @@
 import express from "express";
 import logger from "./utils/logger.js";
-import jobRoutes from './routes/jobRoutes.js'
+import jobRoutes from "./routes/jobRoutes.js";
 
 // creating express app instance
 const app = express();
@@ -13,7 +13,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is Running" });
 });
 
-app.use(jobRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // if no route this is run
 app.use((req, res) => {
@@ -24,6 +24,11 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   // console.error(err.stack); we can use logger instead of this and here logger accepts the error object directly and it pull out errors automatically.
   logger.error(err);
+
+  if (res.headersSent) {
+    return next(err);
+  }
+
   res.status(500).json({ error: "Internal error" });
 });
 
