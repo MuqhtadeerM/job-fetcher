@@ -3,12 +3,14 @@ import {
   getJobs,
   getJobById,
   filterJobs,
+  fetchCompanyJobs,
 } from "../controllers/jobController.js";
 import validate from "../middlewares/validate.js";
 import {
   getJobsQuerySchema,
   jobIdParamSchema,
   filterJobsBodySchema,
+  fetchCompanyBodySchema,
 } from "../validators/jobValidators.js";
 
 // express.Router() creates a mini, self-contained router instance —
@@ -27,5 +29,11 @@ router.get("/", validate(getJobsQuerySchema, "query"), getJobs);
 router.get("/:id", validate(jobIdParamSchema, "params"), getJobById);
 
 router.post("/filter", validate(filterJobsBodySchema, "body"), filterJobs);
+
+router.post(
+  "/company",
+  validate(fetchCompanyBodySchema, "body"),
+  fetchCompanyJobs,
+);
 
 export default router;

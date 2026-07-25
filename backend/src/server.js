@@ -7,7 +7,7 @@ import logger from "./utils/logger.js";
   await connectDB();
   app.listen(config.port, () => {
     logger.info(
-      `Server is running in ${config.nodeEnv} mode on port ${config.port}`,
+      `Server running in ${config.nodeEnv} mode on port ${config.port}`,
     );
   });
 })();

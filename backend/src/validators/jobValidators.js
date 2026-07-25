@@ -85,4 +85,19 @@ const filterJobsBodySchema = Joi.object({
   keyword: Joi.string().trim().allow("").optional(),
 });
 
-export { getJobsQuerySchema, jobIdParamSchema, filterJobsBodySchema };
+const fetchCompanyBodySchema = Joi.object({
+  careerUrl: Joi.string().uri().required().messages({
+    "string.uri": "careerUrl must be a valid URL",
+    "any.required": "careerUrl is required",
+  }),
+  companyName: Joi.string().trim().min(1).required().messages({
+    "any.required": "companyName is required",
+  }),
+});
+
+export {
+  getJobsQuerySchema,
+  jobIdParamSchema,
+  filterJobsBodySchema,
+  fetchCompanyBodySchema,
+};

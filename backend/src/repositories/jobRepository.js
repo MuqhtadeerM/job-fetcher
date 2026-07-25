@@ -11,19 +11,11 @@ async function createOrUpdateJob(jobData) {
     { applyUrl: jobData.applyUrl },
     { $set: jobData },
     {
-      // upsert: true — if no document matches the filter, INSERT a new one
-      // using the update data instead of doing nothing. This is what turns
-      // this single call into "create OR update," atomically, in one
-      // database round-trip.
       upsert: true,
-      // new: true — return the document AFTER the update/insert is applied,
-      // not the old (pre-update) version. Without this, on an update you'd
-      // get back the stale data from before your changes were applied.
-      new: true,
-      // runValidators: true — Mongoose does NOT run schema validation
-      // (required fields, enum checks, etc.) on findOneAndUpdate by default,
-      // only on .save()/.create(). We must explicitly opt in, or a provider
-      // bug could silently save an invalid job straight through this path.
+      // returnDocument: 'after' replaces the deprecated `new: true` —
+      // same meaning: return the document AFTER the update/insert is
+      // applied, not the stale pre-update version.
+      returnDocument: "after",
       runValidators: true,
     },
   );
