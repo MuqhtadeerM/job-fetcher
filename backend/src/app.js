@@ -1,5 +1,6 @@
 import express from "express";
 import logger from "./utils/logger.js";
+import jobRoutes from './routes/jobRoutes.js'
 
 // creating express app instance
 const app = express();
@@ -11,6 +12,8 @@ app.use(express.json());
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is Running" });
 });
+
+app.use(jobRoutes);
 
 // if no route this is run
 app.use((req, res) => {
