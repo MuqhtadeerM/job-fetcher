@@ -19,7 +19,7 @@ app.use((req, res) => {
 
 // global error handler
 app.use((err, req, res, next) => {
-  // console.error(err.stack); we can use logger instead of this
+  // console.error(err.stack); we can use logger instead of this and here logger accepts the error object directly and it pull out errors automatically.
   logger.error(err);
   res.status(500).json({ error: "Internal error" });
 });
