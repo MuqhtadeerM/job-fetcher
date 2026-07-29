@@ -1,6 +1,8 @@
 import discordNotifier from "./discordNotifier.js";
 import slackNotifier from "./slackNotifier.js";
 import logger from "../utils/logger.js";
+import telegramNotifier from "./telegramNotifier.js";
+import emailNotifier from "./emailNotifier.js";
 
 // The notification registry — exactly the same pattern as Step 10's
 // providerRegistry, just for a different domain. Adding Telegram/Email
@@ -8,6 +10,8 @@ import logger from "../utils/logger.js";
 const notifiers = {
   discord: discordNotifier,
   slack: slackNotifier,
+  telegram: telegramNotifier,
+  email: emailNotifier,
 };
 
 /**
@@ -16,15 +20,15 @@ const notifiers = {
  * configured but fail to send are logged individually — one channel's
  * failure never prevents another channel from being attempted.
  */
+// notifyAll() and notifyNewJobs() below are COMPLETELY UNCHANGED from
+// Step 15 — this is the concrete proof, again, that the registry pattern
+// insulates the rest of the app from exactly this kind of growth.
+
 async function notifyAll(message) {
   const results = {};
-
-  // Object.entries + a plain for...of, exactly like Step 8's ATS
-  // signature lookup — the same iteration technique, reused again.
   for (const [channelName, notifier] of Object.entries(notifiers)) {
     const result = await notifier.send(message);
     results[channelName] = result;
-
     if (result.sent) {
       logger.info(`Notification sent via ${channelName}`);
     } else {
@@ -33,7 +37,6 @@ async function notifyAll(message) {
       );
     }
   }
-
   return results;
 }
 
