@@ -1,5 +1,6 @@
 import fetchGreenhouseJobs from "../providers/greenhouseProvider.js";
-import fetchLeverJobs from "../providers/leverProvider.js"; // NEW import
+import fetchLeverJobs from "../providers/leverProvider.js";
+import fetchGenericJobs from "../providers/genericProvider.js";
 
 function notImplemented(providerName) {
   return async () => {
@@ -9,14 +10,14 @@ function notImplemented(providerName) {
 
 const providerRegistry = {
   greenhouse: fetchGreenhouseJobs,
-  lever: fetchLeverJobs, // CHANGED from notImplemented('lever') to the real provider
+  lever: fetchLeverJobs,
   workday: notImplemented("workday"),
   ashby: notImplemented("ashby"),
   smartrecruiters: notImplemented("smartrecruiters"),
   recruitee: notImplemented("recruitee"),
   teamtailor: notImplemented("teamtailor"),
   bamboohr: notImplemented("bamboohr"),
-  generic: notImplemented("generic"),
+  generic: fetchGenericJobs, // CHANGED
 };
 
 function getProvider(ats) {
