@@ -5,6 +5,7 @@ import {
   updateLastFetched,
 } from "../repositories/companyRepository.js";
 import logger from "../utils/logger.js";
+import { notifyNewJobs } from "../notifications/notificationService.js";
 
 // Module-level variable holding the currently running cron task (or null
 // if nothing is scheduled). Keeping this at module scope means it persists
@@ -35,11 +36,16 @@ async function runScheduledFetch() {
     try {
       const result = await fetchJobsForCompany(company.careerUrl, company.name);
       await updateLastFetched(company._id, { lastKnownAts: result.ats });
+
+      // NEW: notify only when the fetch actually succeeded AND found
+      // genuinely new postings — no point notifying about a fetch that
+      // failed, or one that succeeded but found nothing new.
+      if (result.success && result.newJobs > 0) {
+        await notifyNewJobs(company.name, result.newJobs);
+      }
+
       results.push(result);
     } catch (error) {
-      // A truly unexpected crash (not the orchestrator's own handled
-      // success:false path, but something throwing past it) still
-      // shouldn't stop the rest of the companies in this run.
       logger.error(
         `Scheduler: unexpected error fetching "${company.name}": ${error.message}`,
       );
