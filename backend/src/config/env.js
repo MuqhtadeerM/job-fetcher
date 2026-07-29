@@ -17,22 +17,17 @@ const config = {
     pass: process.env.SMTP_PASS || null,
   },
   notifyEmailTo: process.env.NOTIFY_EMAIL_TO || null,
+  jwtSecret: process.env.JWT_SECRET,
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
 };
 
-// Variables the app CANNOT function without, regardless of environment.
-// Notification channels are intentionally excluded here — those are
-// optional features, not core requirements (Step 15/16 already treat
-// missing webhook/SMTP config as a normal, non-fatal state).
-const REQUIRED_IN_ALL_ENVS = ["mongoUri"];
+// jwtSecret is now required, since a missing/blank signing secret would
+// be a serious security hole, not just a missing optional feature.
+const REQUIRED_IN_ALL_ENVS = ["mongoUri", "jwtSecret"];
 
 function validateConfig() {
   const missing = REQUIRED_IN_ALL_ENVS.filter((key) => !config[key]);
-
   if (missing.length > 0) {
-    // We deliberately use console.error here, NOT our logger — this
-    // check runs at the very top of the module, before we can even be
-    // sure logger.js itself initialized cleanly. Keeping this dependency-free
-    // avoids a confusing secondary failure if something upstream is broken.
     console.error(
       `FATAL: Missing required environment variables: ${missing.join(", ")}`,
     );

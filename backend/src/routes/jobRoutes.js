@@ -12,6 +12,7 @@ import {
   filterJobsBodySchema,
   fetchCompanyBodySchema,
 } from "../validators/jobValidators.js";
+import requireAuth from "../middlewares/authMiddleware.js";
 
 // express.Router() creates a mini, self-contained router instance —
 // a "mini app" that only knows about job-related routes. We'll mount this
@@ -32,6 +33,7 @@ router.post("/filter", validate(filterJobsBodySchema, "body"), filterJobs);
 
 router.post(
   "/company",
+  requireAuth,
   validate(fetchCompanyBodySchema, "body"),
   fetchCompanyJobs,
 );

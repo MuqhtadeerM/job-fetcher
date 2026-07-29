@@ -1,3 +1,4 @@
+import authRoutes from "./routes/authRoutes.js";
 import express from "express";
 import logger from "./utils/logger.js";
 import jobRoutes from "./routes/jobRoutes.js";
@@ -14,9 +15,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is Running" });
 });
 
-// new imports 
+// new imports
+app.use("/api/auth", authRoutes);
 app.use("/api/scheduler", schedulerRoutes);
-// app.use("/api/jobs", jobRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // if no route this is run
 app.use((req, res) => {
